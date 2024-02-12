@@ -139,16 +139,16 @@ int main()
     
     Mesh MyTestMesh;
     Mesh MyTestMeshMonke;
-    Mesh House;
+    Mesh Mountains;
     Meshes.push_back(&MyTestMesh);
     Meshes.push_back(&MyTestMeshMonke);
-    Meshes.push_back(&House);
+    Meshes.push_back(&Mountains);
 
 
 
     ReadFiles::ReadOBJ("C:/Users/soroe/Documents/CubeToTestWith.obj", MyTestMesh);
     ReadFiles::ReadOBJ("C:/Users/soroe/Documents/monke.obj", MyTestMeshMonke);
-    ReadFiles::ReadOBJ("C:/Users/soroe/Documents/House.obj", House);
+    ReadFiles::ReadOBJ("C:/Users/soroe/Documents/Mountain1.obj", Mountains);
 
 
 	for (auto Mesh : Meshes)
@@ -156,9 +156,10 @@ int main()
         Mesh->Bind(shaderProgram);
     }
 
- 
+
+    Mountains.SetLocation(glm::vec3(-6, 0, 0));
    
-    MyTestMeshMonke.modelMat = glm::translate(glm::mat4(1), glm::vec3(3, 0, 0));
+    MyTestMeshMonke.SetLocation(glm::vec3(3, 0, 0));
     //House.modelMat = glm::translate(glm::mat4(1), glm::vec3(-3, 0, 0));
 
     // render loop
@@ -225,7 +226,7 @@ int main()
         //////////////////////
 
         //MyTestMeshMonke.modelMat = glm::translate(MyTestMeshMonke.modelMat, glm::vec3(1*deltaTime, 0, 0));
-        MyTestMeshMonke.modelMat = glm::rotate(MyTestMeshMonke.modelMat, 0.5f * deltaTime, glm::vec3(1.0f, 0.0f, 0.0f));
+        //MyTestMeshMonke.modelMat = glm::rotate(MyTestMeshMonke.modelMat, 0.5f * deltaTime, glm::vec3(1.0f, 0.0f, 0.0f));
         for (auto Mesh : Meshes)
         {
             Mesh->Draw();
@@ -316,6 +317,44 @@ void processInput(GLFWwindow* window)
     }
 
 
+
+    if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(0, 0, -1) * deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(0, 0, 1) * deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(1, 0, 0) * deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(-1, 0, 0) * deltaTime);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(0, 1, 0) * deltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS)
+    {
+        SelectedMesh->AddLocation(glm::vec3(0, -1, 0) * deltaTime);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
+    {
+        SelectedMesh->AddScale(glm::vec3(0.5) * deltaTime);
+    }
+     if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS)
+    {
+        SelectedMesh->AddScale(glm::vec3(-0.5) * deltaTime);
+    }
+
+
+
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         Zoom -= 10*deltaTime;
@@ -341,14 +380,14 @@ void processInput(GLFWwindow* window)
     {
        if(SelectedMesh)
        {
-           SelectedMesh->modelMat = glm::rotate(SelectedMesh->modelMat, 1.0f * deltaTime, glm::vec3(0, 1, 0));
+           SelectedMesh->AddRotation(glm::vec3(0,90,0)*deltaTime);
        }
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         if (SelectedMesh)
         {
-            SelectedMesh->modelMat = glm::rotate(SelectedMesh->modelMat, -1.0f * deltaTime, glm::vec3(0, 1, 0));
+            SelectedMesh->AddRotation(glm::vec3(0, -90, 0) * deltaTime);
         }
     }
 }

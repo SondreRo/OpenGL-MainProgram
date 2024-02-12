@@ -3,13 +3,17 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/euler_angles.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 Mesh::Mesh()
 {
-    modelMat = glm::mat4(1.0f);
-    
+    ModelLocation = glm::vec3(1.0f);
+    ModelRotation = glm::vec3(0.0f);
+    ModelScale = glm::vec3(1.0f);
+
 }
 
 void Mesh::Bind(unsigned int ShaderProgram)
@@ -49,12 +53,9 @@ void Mesh::Bind(unsigned int ShaderProgram)
 }
 
 void Mesh::Draw()
-{
-
-    //modelMat = glm::translate(glm::mat4(1.0f), Location);
-    //modelMat += glm::rotate(glm::mat4(1.0f), 1.0f, Rotation);
-    
-    glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
+{    
+    ;
+    glUniformMatrix4fv(modelMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
     glBindVertexArray(VAO);
 
     glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
@@ -72,34 +73,68 @@ std::string Mesh::GetName()
     return Name;
 }
 
+glm::mat4 Mesh::CalculateMeshMatrix()
+{
+    glm::mat4 MeshMatrix(1.0f);
+
+    MeshMatrix *= glm::translate(glm::mat4(1.0f), ModelLocation);
+
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    MeshMatrix *= glm::scale(glm::mat4(1.0f), ModelScale);
+
+    return MeshMatrix;
+}
+
 void Mesh::SetName(std::string NewName)
 {
     Name = NewName;
 }
 
+void Mesh::SetLocation(glm::vec3 NewLocation)
+{
+    ModelLocation = NewLocation;
+}
+
+void Mesh::AddLocation(glm::vec3 AddLocation)
+{
+    ModelLocation += AddLocation;
+}
+
 
 glm::vec3 Mesh::GetLocation()
 {
-    glm::mat4 transformation = modelMat; // your transformation matrix.
-    glm::vec3 scale;
-    glm::quat rotation;
-    glm::vec3 translation;
-    glm::vec3 skew;
-    glm::vec4 perspective;
-    glm::decompose(transformation, scale, rotation, translation, skew, perspective);
-    rotation = glm::conjugate(rotation);
-    return translation;
+    return ModelLocation;
 }
 
-glm::quat Mesh::GetRotation()
+void Mesh::SetRotation(glm::vec3 NewRotation)
 {
-    glm::mat4 transformation = modelMat; // your transformation matrix.
-    glm::vec3 scale;
-    glm::quat rotation;
-    glm::vec3 translation;
-    glm::vec3 skew;
-    glm::vec4 perspective;
-    glm::decompose(transformation, scale, rotation, translation, skew, perspective);
-    rotation = glm::conjugate(rotation);
-    return rotation;
+    ModelRotation = NewRotation;
+}
+
+void Mesh::AddRotation(glm::vec3 AddRotation)
+{
+    ModelRotation += AddRotation;
+}
+
+glm::vec3 Mesh::GetRotation()
+{
+    return ModelRotation;
+}
+
+void Mesh::SetScale(glm::vec3 NewScale)
+{
+    ModelScale = NewScale;
+}
+
+void Mesh::AddScale(glm::vec3 AddScale)
+{
+    ModelScale += AddScale;
+}
+
+glm::vec3 Mesh::GetScale()
+{
+    return ModelScale;
 }
