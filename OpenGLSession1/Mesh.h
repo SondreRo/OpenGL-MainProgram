@@ -1,17 +1,29 @@
 #pragma once
 #include <string>
 
+#include <vector>
 #include "Vertex.h"
 #include "Triangle.h"
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
+
+#include "glm/glm.hpp"
+
+#include "Collisions.h"
+
+//#include "Vertex.h"
+//#include "Triangle.h"
+//#include <vector>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/quaternion.hpp>
+//#include "Collisions.h"
+
 class Mesh
 {
 private:
-	int modelMemoryLocation;
+	int meshMemoryLocation;
 	std::string Name;
 public:
+
+	Model* Owner;
 	unsigned int VBO, VAO, EBO;
 	Mesh();
 	std::vector<Vertex> vertices;
@@ -21,9 +33,9 @@ public:
 	void Draw();
 	void CleanUp();
 
-	glm::vec3 ModelLocation;
-	glm::vec3 ModelRotation;
-	glm::vec3 ModelScale;
+	glm::vec3 MeshLocation;
+	glm::vec3 MeshRotation;
+	glm::vec3 MeshScale;
 
 
 	glm::mat4 CalculateMeshMatrix();
@@ -31,6 +43,7 @@ public:
 	std::string GetName();
 	void SetName(std::string NewName);
 
+	Model* GetOwner();
 
 	void SetLocation(glm::vec3 NewLocation);
 	void AddLocation(glm::vec3 AddLocation);
@@ -44,5 +57,9 @@ public:
 	void AddScale(glm::vec3 AddScale);
 	glm::vec3 GetScale();
 
+	std::vector<SphereCollider*> SphereColliders;
+	void AddSphereCollider(glm::vec3 Center, float Radius);
+
+	std::vector<SphereCollider*> GetSphereColliders();
 };
 

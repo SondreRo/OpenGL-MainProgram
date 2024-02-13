@@ -1,19 +1,27 @@
 #include "Mesh.h"
 
+//#include <windows.h>
+
+#include "AppManager.h"
 #include "glad/glad.h"
-#include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/euler_angles.hpp"
-#include "glm/gtx/matrix_decompose.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtx/rotate_vector.hpp"
+
+
+//#include "glad/glad.h"
+//#include "glm/glm.hpp"
+//#include "glm/gtc/type_ptr.hpp"
+//#include "glm/gtx/euler_angles.hpp"
+//#include "glm/gtx/matrix_decompose.hpp"
+//#include "glm/gtx/quaternion.hpp"
+//#include "glm/gtx/rotate_vector.hpp"
+//#include "AppManager.h"
+
 
 Mesh::Mesh()
 {
-    ModelLocation = glm::vec3(1.0f);
-    ModelRotation = glm::vec3(0.0f);
-    ModelScale = glm::vec3(1.0f);
-
+    MeshLocation = glm::vec3(0.0f);
+    MeshRotation = glm::vec3(0.0f);
+    MeshScale = glm::vec3(1.0f);
 }
 
 void Mesh::Bind(unsigned int ShaderProgram)
@@ -40,7 +48,6 @@ void Mesh::Bind(unsigned int ShaderProgram)
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -49,16 +56,14 @@ void Mesh::Bind(unsigned int ShaderProgram)
     glBindVertexArray(0);
 
 
-    int modelLocation = glGetUniformLocation(ShaderProgram, "model");
+    meshMemoryLocation = glGetUniformLocation(ShaderProgram, "mesh");
 }
 
 void Mesh::Draw()
 {    
-    ;
-    glUniformMatrix4fv(modelMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
+    glUniformMatrix4fv(meshMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
     glBindVertexArray(VAO);
-
-    glDrawElements(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()*3), GL_UNSIGNED_INT, 0);
 }
 
 void Mesh::CleanUp()
@@ -77,13 +82,13 @@ glm::mat4 Mesh::CalculateMeshMatrix()
 {
     glm::mat4 MeshMatrix(1.0f);
 
-    MeshMatrix *= glm::translate(glm::mat4(1.0f), ModelLocation);
+    MeshMatrix *= glm::translate(glm::mat4(1.0f), MeshLocation);
 
-    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(MeshRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(MeshRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(MeshRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-    MeshMatrix *= glm::scale(glm::mat4(1.0f), ModelScale);
+    MeshMatrix *= glm::scale(glm::mat4(1.0f), MeshScale);
 
     return MeshMatrix;
 }
@@ -93,48 +98,66 @@ void Mesh::SetName(std::string NewName)
     Name = NewName;
 }
 
+Model* Mesh::GetOwner()
+{
+    return Owner;
+}
+
 void Mesh::SetLocation(glm::vec3 NewLocation)
 {
-    ModelLocation = NewLocation;
+    MeshLocation = NewLocation;
 }
 
 void Mesh::AddLocation(glm::vec3 AddLocation)
 {
-    ModelLocation += AddLocation;
+    MeshLocation += AddLocation;
 }
 
 
 glm::vec3 Mesh::GetLocation()
 {
-    return ModelLocation;
+    return GetOwner()->GetLocation() + MeshLocation;
 }
 
 void Mesh::SetRotation(glm::vec3 NewRotation)
 {
-    ModelRotation = NewRotation;
+    MeshRotation = NewRotation;
 }
 
 void Mesh::AddRotation(glm::vec3 AddRotation)
 {
-    ModelRotation += AddRotation;
+    MeshRotation += AddRotation;
 }
 
 glm::vec3 Mesh::GetRotation()
 {
-    return ModelRotation;
+    return MeshRotation;
 }
 
 void Mesh::SetScale(glm::vec3 NewScale)
 {
-    ModelScale = NewScale;
+    MeshScale = NewScale;
 }
 
 void Mesh::AddScale(glm::vec3 AddScale)
 {
-    ModelScale += AddScale;
+    MeshScale += AddScale;
 }
 
 glm::vec3 Mesh::GetScale()
 {
-    return ModelScale;
+    return GetOwner()->GetScale() * MeshScale;
+}
+
+void Mesh::AddSphereCollider(glm::vec3 Center, float Radius)
+{
+    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true);
+    new_sphere_collider->Owner = this;
+	SphereColliders.push_back(new_sphere_collider);
+    
+}
+
+std::vector<SphereCollider*> Mesh::GetSphereColliders()
+{
+    return SphereColliders;
 }
