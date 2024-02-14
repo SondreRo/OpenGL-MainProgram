@@ -8,6 +8,7 @@
 #include "glm/glm.hpp"
 
 #include "Collisions.h"
+#include "Texture.h"
 
 //#include "Vertex.h"
 //#include "Triangle.h"
@@ -21,21 +22,25 @@ class Mesh
 private:
 	int meshMemoryLocation;
 	std::string Name;
+	std::vector<Texture> textures;
 public:
 
 	Model* Owner;
 	unsigned int VBO, VAO, EBO;
 	Mesh();
+	Mesh(std::vector<Vertex> Vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+
 	std::vector<Vertex> vertices;
-	std::vector<Triangle> indices;
+	std::vector<unsigned int> indices;
+
 
 	void Bind(unsigned int ShaderProgram);
 	void Draw();
 	void CleanUp();
 
-	glm::vec3 MeshLocation;
-	glm::vec3 MeshRotation;
-	glm::vec3 MeshScale;
+	glm::vec3 MeshLocation{ 0.0f };
+	glm::vec3 MeshRotation{ 0.0f };
+	glm::vec3 MeshScale{ 1 };
 
 
 	glm::mat4 CalculateMeshMatrix();

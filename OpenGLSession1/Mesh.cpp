@@ -24,6 +24,14 @@ Mesh::Mesh()
     MeshScale = glm::vec3(1.0f);
 }
 
+Mesh::Mesh(std::vector<Vertex> Vertices, std::vector<unsigned> indices, std::vector<Texture> textures)
+{
+    this->vertices = Vertices;
+    this->indices = indices;
+    this->textures = textures;
+}
+
+
 void Mesh::Bind(unsigned int ShaderProgram)
 {
     
@@ -42,9 +50,13 @@ void Mesh::Bind(unsigned int ShaderProgram)
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
+
+    // normal attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    // TextureCoord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -62,8 +74,15 @@ void Mesh::Bind(unsigned int ShaderProgram)
 void Mesh::Draw()
 {    
     glUniformMatrix4fv(meshMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
+    for (unsigned int i = 0; i < textures.size(); i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[0].id);
+    }
+
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()*3), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void Mesh::CleanUp()

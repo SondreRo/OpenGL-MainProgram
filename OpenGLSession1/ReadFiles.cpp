@@ -17,18 +17,23 @@ std::vector<Vertex> ReadFiles::ReadFileVertexData(const char* path)
 		int amountOfPoints = std::stoi(line);
 		while (std::getline(in,line) )
 		{
+			glm::vec3 pos;
+			glm::vec3 nor;
+
 			Vertex tempVertex;
-			tempVertex.x = std::stof(line.substr(0, line.find(',')));
+			pos.x = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.y = std::stof(line.substr(0, line.find(',')));
+			pos.y = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.z = std::stof(line.substr(0, line.find(',')));
+			pos.z = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.r = std::stof(line.substr(0, line.find(',')));
+			nor.x = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.g = std::stof(line.substr(0, line.find(',')));
+			nor.y = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.b = std::stof(line.substr(0, line.find(',')));	
+			nor.z = std::stof(line.substr(0, line.find(',')));
+			tempVertex.Position = pos;
+			tempVertex.Normal = nor;
 			vertices.push_back(tempVertex);
 			
 		}
@@ -55,19 +60,24 @@ void ReadFiles::ReadFileVertexData(const char* path, Line& inLine)
 		int amountOfPoints = std::stoi(line);
 		while (std::getline(in, line))
 		{
+			glm::vec3 pos;
+			glm::vec3 nor;
+
 			Vertex tempVertex;
-			tempVertex.x = std::stof(line.substr(0, line.find(',')));
+			pos.x = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.y = std::stof(line.substr(0, line.find(',')));
+			pos.y = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.z = std::stof(line.substr(0, line.find(',')));
+			pos.z = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.r = std::stof(line.substr(0, line.find(',')));
+			nor.x = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.g = std::stof(line.substr(0, line.find(',')));
+			nor.y = std::stof(line.substr(0, line.find(',')));
 			line.erase(0, line.find(',') + 1);
-			tempVertex.b = std::stof(line.substr(0, line.find(',')));
-			inLine.mVertices.push_back(tempVertex);
+			nor.z = std::stof(line.substr(0, line.find(',')));
+			tempVertex.Position = pos;
+			tempVertex.Normal = nor;
+			vertices.push_back(tempVertex);
 
 		}
 		in.close();
@@ -99,7 +109,7 @@ std::string ReadFiles::ReadFileString(const char* path)
 
 void ReadFiles::ReadOBJ(const char* path, Mesh& inMesh)
 {
-	std::ifstream in;
+	/*std::ifstream in;
 	in.open(path);
 	std::string line;
 	std::string name;
@@ -128,7 +138,11 @@ void ReadFiles::ReadOBJ(const char* path, Mesh& inMesh)
 				>> g
 				>> b;
 
-				inMesh.vertices.emplace_back(x,y,z,r,g,b);
+				Vertex newVertex;
+				newVertex.Position = glm::vec3(x, y, z);
+				newVertex.Normal = glm::vec3(r, g, b);
+
+				inMesh.vertices.push_back(newVertex);
 				break;
 
 			case 'f':
@@ -151,5 +165,5 @@ void ReadFiles::ReadOBJ(const char* path, Mesh& inMesh)
 		in.close();
 		std::cout << "Amount of Vertices: " << inMesh.vertices.size() << std::endl;
 		std::cout << "Amount of Triangles: " << inMesh.indices.size() << std::endl;
-	}
+	}*/
 }
