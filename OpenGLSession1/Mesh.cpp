@@ -228,7 +228,20 @@ void Mesh::AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh)
     
 }
 
+void Mesh::AddAxisAlignedCollider(glm::vec3 Center, glm::vec3 Size, Mesh* BoxMesh)
+{
+    BoxMesh->SetScale(Size);
+    BoxMesh->SetLocation(Center);
+    AxisAlignedBox* new_box_collider = new AxisAlignedBox(Center, Size, true, BoxMesh);
+    AxisAlignedBoxColliders.push_back(new_box_collider);
+}
+
 std::vector<SphereCollider*> Mesh::GetSphereColliders()
 {
     return SphereColliders;
+}
+
+std::vector<AxisAlignedBox*> Mesh::GetAxisAlignedBoxColliders()
+{
+    return AxisAlignedBoxColliders;
 }

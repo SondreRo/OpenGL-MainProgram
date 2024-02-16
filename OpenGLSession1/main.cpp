@@ -21,7 +21,8 @@
 #include "Window.h"
 #include "Model.h"
 #include "MeshLoader.h"
-
+#include "Oblig2.h"
+#include "Dots.h"
 
 AppManager appManager;
 Window Mywindow;
@@ -96,12 +97,13 @@ int main()
     //DefaultCubeModel->AddMesh(StrippedSphereMesh);
     //appManager.AddModel(DefaultCubeModel);
 
+    Mesh* BoundingBox = meshLoader.LoadMesh("Defaults/Mesh/BoundingBox.fbx", shaderProgram);
+    StrippedSphereMesh->SetName("BoundingBox");
 
-
-  
+    
     Mesh* FelixCube = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
-    FelixCube->AddSphereCollider(glm::vec3(5,0,0), 2, StrippedSphereMesh);
-
+    FelixCube->AddSphereCollider(glm::vec3(0,0,0), 2, StrippedSphereMesh);
+    FelixCube->AddAxisAlignedCollider(glm::vec3(0,0,0), glm::vec3(1,1,1), BoundingBox);
 
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");
@@ -118,9 +120,26 @@ int main()
 
 
 
+    std::vector<Vertex> MyListOfPoints;
+    MyListOfPoints.emplace_back(glm::vec3(1, 1, 0));
+    MyListOfPoints.emplace_back(glm::vec3(1.5, 3, 0));
+    MyListOfPoints.emplace_back(glm::vec3(2.5, 4, 0));
+    MyListOfPoints.emplace_back(glm::vec3(4, 2, 0));
+    MyListOfPoints.emplace_back(glm::vec3(6, 5, 0));
+    MyListOfPoints.emplace_back(glm::vec3(6.5, 3.5, 0));
+    MyListOfPoints.emplace_back(glm::vec3(7, 7, 0));
+    
 
 
+    Dots NewDots;
+    NewDots.mVertices = MyListOfPoints;
+    NewDots.Bind(shaderProgram);
+    
 
+    Line NewLine;
+    NewLine.mVertices = Oblig2::Test(MyListOfPoints);
+
+    NewLine.Bind(shaderProgram);
 
     appManager.ModelSetup(shaderProgram);
 
@@ -147,6 +166,9 @@ int main()
         //MyLine.Draw();
         appManager.Tick();
         myCamera.tick(appManager.GetDeltaTime());
+
+        NewLine.Draw();
+        NewDots.Draw();
 
         
         glfwSwapBuffers(window);

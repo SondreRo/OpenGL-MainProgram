@@ -8,14 +8,14 @@ private:
 	unsigned int viewMemoryLocation;
 	unsigned int projectionlLocation;
 
-	float yaw = 90;
+	float yaw = -90;
 	float pitch = 0;
 	float roll = 0;
 
 	float Zoom = 45.0f;
 
 	// CameraLocation
-	glm::vec3 WorldLocation = glm::vec3(0.0f, 0.0f, -5.0f);
+	glm::vec3 WorldLocation = glm::vec3(0.0f, 0.0f, 5.0f);
 	glm::vec3 LocalLocation = glm::vec3(0.0f, 0.0f, 0.0f); // Start Position
 	
 	// CameraRotation

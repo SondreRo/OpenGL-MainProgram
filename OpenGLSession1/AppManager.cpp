@@ -3,7 +3,7 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 #include "Camera.h"
-#include "Collisions.h"
+#include "Collisions/Collisions.h"
 
 AppManager::AppManager()
 {
@@ -47,10 +47,12 @@ void AppManager::Tick()
 				CollisionResult collisionResult = Collisions::CheckSphereCollisions(Model, Model2);
 				if(collisionResult.IsColliding)
 				{
-					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;
-			/*		collisionResult.OtherModel->AddScale(glm::vec3(-0.001f));
-					collisionResult.MainModel->AddScale(glm::vec3(-0.001f));*/
-					
+					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;					
+				}
+				collisionResult = Collisions::CheckAxisAlignedBoxCollisions(Model, Model2);
+				if(collisionResult.IsColliding)
+				{
+					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;					
 				}
 			}
 		}

@@ -6,7 +6,7 @@
 
 #include "glm/glm.hpp"
 
-#include "Collisions.h"
+#include "Collisions/Collisions.h"
 #include "Texture.h"
 
 class Model;
@@ -56,9 +56,14 @@ public:
 	void AddScale(glm::vec3 AddScale);
 	glm::vec3 GetScale();
 	
+
 	std::vector<SphereCollider*> SphereColliders;
+	std::vector<AxisAlignedBox*> AxisAlignedBoxColliders;
+
 	void AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh);
+	void AddAxisAlignedCollider(glm::vec3 Center, glm::vec3 Size, Mesh* BoxMesh);
 
 	std::vector<SphereCollider*> GetSphereColliders();
+	std::vector<AxisAlignedBox*> GetAxisAlignedBoxColliders();
 };
 
