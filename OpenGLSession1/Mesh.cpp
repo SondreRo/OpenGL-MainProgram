@@ -6,7 +6,9 @@
 #include "glad/glad.h"
 #include "glm/gtc/type_ptr.hpp"
 
-
+#include "Vertex.h"
+#include "Model.h"
+#include "Triangle.h"
 //#include "glad/glad.h"
 //#include "glm/glm.hpp"
 //#include "glm/gtc/type_ptr.hpp"
@@ -22,6 +24,12 @@ Mesh::Mesh()
     MeshLocation = glm::vec3(0.0f);
     MeshRotation = glm::vec3(0.0f);
     MeshScale = glm::vec3(1.0f);
+
+    VBO = -1;
+    VAO = -1;
+    EBO = -1;
+    Owner = nullptr;
+    meshMemoryLocation = -1;
 }
 
 Mesh::Mesh(std::vector<Vertex> Vertices, std::vector<unsigned> indices, std::vector<Texture> textures)
@@ -29,6 +37,16 @@ Mesh::Mesh(std::vector<Vertex> Vertices, std::vector<unsigned> indices, std::vec
     this->vertices = Vertices;
     this->indices = indices;
     this->textures = textures;
+
+    MeshLocation = glm::vec3(0.0f);
+    MeshRotation = glm::vec3(0.0f);
+    MeshScale = glm::vec3(1.0f);
+
+    VBO = -1;
+    VAO = -1;
+    EBO = -1;
+    Owner = nullptr;
+    meshMemoryLocation = -1;
 }
 
 
@@ -48,7 +66,7 @@ void Mesh::Bind(unsigned int ShaderProgram)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Triangle), indices.data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(0 * sizeof(float)));
     glEnableVertexAttribArray(0);
 
     // normal attribute
@@ -66,23 +84,55 @@ void Mesh::Bind(unsigned int ShaderProgram)
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
+    
 
 
     meshMemoryLocation = glGetUniformLocation(ShaderProgram, "mesh");
+
+    if(!SphereColliders.empty())
+    {
+	    for (auto sphere_collider: SphereColliders)
+	    {
+            if(sphere_collider->SphereMesh)
+            {
+                sphere_collider->SphereMesh->Bind(ShaderProgram);
+            }
+	    }
+    }
+
 }
 
 void Mesh::Draw()
 {    
     glUniformMatrix4fv(meshMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
-    for (unsigned int i = 0; i < textures.size(); i++)
+
+    if(textures.empty())
     {
-        glBindTexture(GL_TEXTURE_2D, textures[0].id);
+        glBindTexture(GL_TEXTURE_2D, -1);
     }
+    else
+    {
+        for (unsigned int i = 0; i < textures.size(); i++)
+        {
+            glBindTexture(GL_TEXTURE_2D, textures[0].id);
+        }
+    }
+   
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 
     glActiveTexture(GL_TEXTURE0);
+
+
+    if (!SphereColliders.empty())
+    {
+        for (auto sphere_collider : SphereColliders)
+        {
+            sphere_collider->SphereMesh->Draw();
+        }
+    }
+
 }
 
 void Mesh::CleanUp()
@@ -108,7 +158,7 @@ glm::mat4 Mesh::CalculateMeshMatrix()
     MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(MeshRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
     MeshMatrix *= glm::scale(glm::mat4(1.0f), MeshScale);
-
+    glm::vec3 test = MeshMatrix[3];
     return MeshMatrix;
 }
 
@@ -135,7 +185,7 @@ void Mesh::AddLocation(glm::vec3 AddLocation)
 
 glm::vec3 Mesh::GetLocation()
 {
-    return GetOwner()->GetLocation() + MeshLocation;
+    return MeshLocation;//GetOwner()->GetLocation() + MeshLocation;
 }
 
 void Mesh::SetRotation(glm::vec3 NewRotation)
@@ -165,12 +215,14 @@ void Mesh::AddScale(glm::vec3 AddScale)
 
 glm::vec3 Mesh::GetScale()
 {
-    return GetOwner()->GetScale() * MeshScale;
+    return MeshScale;//GetOwner()->GetScale() * MeshScale;
 }
 
-void Mesh::AddSphereCollider(glm::vec3 Center, float Radius)
+void Mesh::AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh)
 {
-    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true);
+    SphereMesh->SetScale(glm::vec3(Radius));
+    SphereMesh->SetLocation(Center);
+    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true, SphereMesh);
     new_sphere_collider->Owner = this;
 	SphereColliders.push_back(new_sphere_collider);
     

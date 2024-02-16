@@ -20,6 +20,7 @@
 #include "AppManager.h"
 #include "Window.h"
 #include "Model.h"
+#include "MeshLoader.h"
 
 
 AppManager appManager;
@@ -84,79 +85,38 @@ int main()
     ReadFiles::ReadFileVertexData("D:/School/Matte3/09.01/Testing/Oppgave2.txt", MyLine);
     MyLine.Bind(shaderProgram);*/ 
 
-    // Mesh Homer;
-    // ReadFiles::ReadOBJ("C:/Users/soroe/Documents/CubeToTestWith.obj", Homer);
-    // Meshes.push_back(&Homer);
-    // Homer.SetLocation(glm::vec3(0, 3, 0));
+	MeshLoader meshLoader;
+    // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
+    ///////////////////////////////////////////////// HERE YOU CAN LOAD MESH //////////////////////////////////////////////
+    // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
 
-
-    //Mesh Center;
-    //ReadFiles::ReadOBJ("C:/Users/soroe/Documents/Center.obj", Center);
-    //Model CenterModel;
-    //CenterModel.AddMesh(&Center);
-    //CenterModel.SetName("Center Point");
-    //appManager.AddModel(&CenterModel);
-
-
-    // BALL 1 //////////////////////
-    //Mesh Ball1;
-    //ReadFiles::ReadOBJ("C:/Users/soroe/Documents/Ball.obj", Ball1);
-    //Ball1.AddSphereCollider(glm::vec3(0,0,0), 1);
-    ////Ball1.AddSphereCollider(glm::vec3(0, 1, 0), 1);
-    //Ball1.AddLocation(glm::vec3(0, 0, 0));
-
-
-    //Model BallModel;
-    //BallModel.AddMesh(&Ball1);
-    //BallModel.AddMesh(&Ball1);
-
-    //BallModel.SetName("Ball1");
-    //appManager.AddModel(&BallModel);
-    //BallModel.SetLocation(glm::vec3(5, 0, 0));
-
-
-    //Mesh Ball2 = Ball1;
-    ////ReadFiles::ReadOBJ("C:/Users/soroe/Documents/Ball.obj", Ball2);
-    //Ball2.AddSphereCollider(glm::vec3(0, 0, 0), 1);
-
-    //Model BallModel2;
-    //BallModel2.AddMesh(&Ball2);
-    //BallModel2.SetName("Ball2");
-    //appManager.AddModel(&BallModel2);
-    //BallModel2.SetLocation(glm::vec3(8, 0, 0));
+    Mesh* StrippedSphereMesh = meshLoader.LoadMesh("Defaults/Mesh/SphereStripped.fbx", shaderProgram);
+    StrippedSphereMesh->SetName("StrippedSphereMesh");
+    //Model* DefaultCubeModel = new Model();
+    //DefaultCubeModel->AddMesh(StrippedSphereMesh);
+    //appManager.AddModel(DefaultCubeModel);
 
 
 
-
- //   Mesh MyTestMeshMonke;
- //   ReadFiles::ReadOBJ("C:/Users/soroe/Documents/monke.obj", MyTestMeshMonke);
- //   MyTestMeshMonke.AddSphereCollider(glm::vec3(3, 0, 0), 1);
-	//Model MonkeyModel;
- //   MonkeyModel.SetLocation(glm::vec3(-3, 0, 0));
- //   MonkeyModel.AddMesh(&MyTestMeshMonke);
- //   MonkeyModel.SetName("Monkey");
+  
+    Mesh* FelixCube = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
+    FelixCube->AddSphereCollider(glm::vec3(5,0,0), 2, StrippedSphereMesh);
 
 
- //   appManager.AddModel(&MonkeyModel);
+    Model* FelixCubeModel = new Model();
+    FelixCubeModel->SetName("FelixCubeModel");
+    FelixCubeModel->AddMesh(FelixCube);
+    FelixCubeModel->SetLocation(glm::vec3(3, 0, 0));
 
-    
-    //Mesh Mountains;
-    //ReadFiles::ReadOBJ("C:/Users/soroe/Documents/Mountain1.obj", Mountains);
-    //Model MountainModel;
-    //MountainModel.AddMesh(&Mountains);
-    //MountainModel.SetLocation(glm::vec3(10, 0, 0));
-    //MountainModel.SetScale(glm::vec3(10));
-    //MountainModel.SetName("Mountain");
+    appManager.AddModel(FelixCubeModel);
 
-    //appManager.AddModel(&MountainModel);
+    Model* FelixCubeModel2 = new Model();
+    FelixCubeModel2->SetName("DifferentFelixCubeModel");
+    FelixCubeModel2->AddMesh(FelixCube);
+    FelixCubeModel2->SetLocation(glm::vec3(10, 0, 0));
+    appManager.AddModel(FelixCubeModel2);
 
 
-    Model MyNewTestModel;
-    //MyNewTestModel.LoadModel("C:/Users/soroe/Documents/MyCube.fbx");
-    MyNewTestModel.LoadModel("C:/Users/soroe/Documents/ConveyorBelt.fbx");
-    MyNewTestModel.SetName("Box");
-    MyNewTestModel.SetRotation(glm::vec3(0));
-    appManager.AddModel(&MyNewTestModel);
 
 
 

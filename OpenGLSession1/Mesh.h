@@ -3,19 +3,13 @@
 
 #include <vector>
 #include "Vertex.h"
-#include "Triangle.h"
 
 #include "glm/glm.hpp"
 
 #include "Collisions.h"
 #include "Texture.h"
 
-//#include "Vertex.h"
-//#include "Triangle.h"
-//#include <vector>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/quaternion.hpp>
-//#include "Collisions.h"
+class Model;
 
 class Mesh
 {
@@ -61,9 +55,9 @@ public:
 	void SetScale(glm::vec3 NewScale);
 	void AddScale(glm::vec3 AddScale);
 	glm::vec3 GetScale();
-
+	
 	std::vector<SphereCollider*> SphereColliders;
-	void AddSphereCollider(glm::vec3 Center, float Radius);
+	void AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh);
 
 	std::vector<SphereCollider*> GetSphereColliders();
 };

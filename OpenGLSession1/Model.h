@@ -22,13 +22,16 @@ class Model
 	unsigned int modelMemoryLocation;
 	std::string Name;
 
-	glm::mat4 CalculateMeshMatrix();
 
 	std::vector<Texture> textures_loaded;
 	std::string directory;
+	
 public:
 	Model();
 	std::vector<Mesh*> Meshes;
+	glm::vec3 Velocity;
+	glm::mat4 CalculateMeshMatrix();
+
 	// Transform
 	void SetLocation(glm::vec3 NewLocation);
 	void AddLocation(glm::vec3 AddLocation);

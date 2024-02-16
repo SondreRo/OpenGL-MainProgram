@@ -40,12 +40,17 @@ void AppManager::Tick()
 		{
 			if (Model != Model2)
 			{
+				if (Model2->GetName() == "DifferentFelixCubeModel")
+				{
+					continue;
+				}
 				CollisionResult collisionResult = Collisions::CheckSphereCollisions(Model, Model2);
 				if(collisionResult.IsColliding)
 				{
 					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;
-					collisionResult.OtherModel->AddScale(glm::vec3(-0.001f));
-					collisionResult.MainModel->AddScale(glm::vec3(-0.001f));
+			/*		collisionResult.OtherModel->AddScale(glm::vec3(-0.001f));
+					collisionResult.MainModel->AddScale(glm::vec3(-0.001f));*/
+					
 				}
 			}
 		}

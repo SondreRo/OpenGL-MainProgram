@@ -1,145 +1,16 @@
-#include "Model.h"
-
+#include "MeshLoader.h"
 #include <iostream>
 
-#include "AppManager.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
-
 #include "glad/glad.h"
-#include "glm/gtc/type_ptr.hpp"
 
-Model::Model()
+Mesh* MeshLoader::LoadMesh(std::string path, unsigned int shaderProgram)
 {
-	modelMemoryLocation = -1;
-	ModelLocation = glm::vec3(0);
-	ModelRotation = glm::vec3(0);
-	ModelScale = glm::vec3(1);
-
-
-}
-
-glm::mat4 Model::CalculateMeshMatrix()
-{
-	glm::mat4 MeshMatrix(1.0f);
-
-	MeshMatrix *= glm::translate(glm::mat4(1.0f), ModelLocation);
-
-	MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	MeshMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(ModelRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	MeshMatrix *= glm::scale(glm::mat4(1.0f), ModelScale);
-	glm::vec3 test = MeshMatrix[3];
-	return MeshMatrix;
-}
-
-void Model::SetLocation(glm::vec3 NewLocation)
-{
-	ModelLocation = NewLocation;
-}
-
-void Model::AddLocation(glm::vec3 AddLocation)
-{
-	ModelLocation += AddLocation;
-}
-
-glm::vec3 Model::GetLocation()
-{
-	return ModelLocation;
-}
-
-void Model::SetRotation(glm::vec3 NewRotation)
-{
-	ModelRotation = NewRotation;
-}
-
-void Model::AddRotation(glm::vec3 AddRotation)
-{
-	ModelRotation += AddRotation;
-}
-
-void Model::SetScale(glm::vec3 NewScale)
-{
-	ModelScale = NewScale;
-}
-
-void Model::AddScale(glm::vec3 AddScale)
-{
-	ModelScale += AddScale;
-}
-
-void Model::Tick(float DeltaTime)
-{
-	//AddLocation(glm::vec3(DeltaTime * Velocity.x/100, DeltaTime * Velocity.y / 100, DeltaTime * Velocity.z / 100));
-}
-
-void Model::Draw()
-{
-	glUniformMatrix4fv(modelMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
-	for (auto Mesh : Meshes)
-	{
-		Mesh->Draw();
-	}
-}
-
-void Model::CleanUp()
-{
-	for (auto Mesh : Meshes)
-	{
-		Mesh->CleanUp();
-	}
-}
-
-void Model::Setup(unsigned int ShaderProgram)
-{
-	modelMemoryLocation = glGetUniformLocation(ShaderProgram, "model");
-	for (auto mesh : Meshes)
-	{
-		mesh->Bind(ShaderProgram);
-	}
-}
-
-std::string Model::GetName()
-{
-	return Name;
-}
-
-void Model::SetName(std::string NewName)
-{
-	Name = NewName;
-}
-
-void Model::AddMesh(Mesh* NewMesh)
-{
-	NewMesh->Owner = this;
-	Meshes.push_back(NewMesh);
-}
-
-std::vector<SphereCollider*> Model::GetSphereColliders()
-{
-	std::vector<SphereCollider*> SphereCollidersToReturn;
-	if(Meshes.empty())
-	{
-		return SphereCollidersToReturn;
-	}
-	for (auto Mesh : Meshes)
-	{
-		for (auto sphere_collider : Mesh->GetSphereColliders())
-		{
-			SphereCollidersToReturn.push_back(sphere_collider);
-		}
-	}
-	return SphereCollidersToReturn;
-}
-
-void Model::LoadModel(std::string path)
-{
+	Meshes.clear();
 	Assimp::Importer importer;
 	unsigned int processFlags =
 		aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
 		aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
-		aiProcess_ValidateDataStructure  | // perform a full validation of the loader's output
+		aiProcess_ValidateDataStructure | // perform a full validation of the loader's output
 		aiProcess_Triangulate | // Ensure all verticies are triangulated (each 3 vertices are triangle)
 		//aiProcess_ConvertToLeftHanded | // convert everything to D3D left handed space (by default right-handed, for OpenGL)
 		aiProcess_SortByPType | // ?
@@ -164,14 +35,24 @@ void Model::LoadModel(std::string path)
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-		return;
+		return nullptr;
 	}
 	directory = path.substr(0, path.find_last_of('/'));
+
+
 	
 	processNode(scene->mRootNode, scene);
+
+	if (Meshes.empty())
+	{
+		return nullptr;
+	}
+	//Meshes[0]->Bind(shaderProgram);
+	return Meshes[0];
 }
 
-void Model::processNode(aiNode* node, const aiScene* scene)
+
+void MeshLoader::processNode(aiNode* node, const aiScene* scene)
 {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
@@ -182,9 +63,11 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	{
 		processNode(node->mChildren[i], scene);
 	}
+
+	
 }
 
-Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh* MeshLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -240,7 +123,7 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	return NewMesh; //Return the mesh
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<Texture> MeshLoader::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
 	std::vector<Texture> textures;
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -261,7 +144,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		if (!skip)
 		{   // if texture hasn't been loaded already, load it
 			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(), this->directory);
+			texture.id = TextureFromFile(str.C_Str());
 			texture.type = typeName;
 			texture.path = str.C_Str();
 			textures.push_back(texture);
@@ -271,7 +154,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 	return textures;
 }
 
-unsigned int Model::TextureFromFile(std::string path, std::string directory)
+unsigned int MeshLoader::TextureFromFile(std::string path)
 {
 	stbi_set_flip_vertically_on_load(false);
 	std::string filename = std::string(path);

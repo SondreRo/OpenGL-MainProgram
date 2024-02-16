@@ -1,4 +1,5 @@
 #pragma once
+//#include "Mesh.h"
 #include "glm/glm.hpp"
 
 class Model;
@@ -19,12 +20,13 @@ public:
 class SphereCollider : public MainCollider
 {
 public:
-	SphereCollider(glm::vec3 inCenter, float inRadius, bool inUseCollision)
+	SphereCollider(glm::vec3 inCenter, float inRadius, bool inUseCollision, Mesh* SphereMesh)
 	{
 		LocalCenter = inCenter;
 		LocalRadius = inRadius;
 		UseCollision = inUseCollision;
 		colliderType = ColliderTypeEnum::Sphere;
+		this->SphereMesh = SphereMesh;
 	}
 
 	
@@ -33,6 +35,10 @@ public:
 	bool UseCollision;
 	glm::vec3 GetCenter();
 	float GetRadius();
+
+	glm::mat4 CaluclateMatrix();
+
+	Mesh* SphereMesh;
 };
 
 struct CollisionResult
@@ -59,5 +65,5 @@ class Collisions
 public:
 	Collisions();
 	static CollisionResult CheckSphereCollisions(Model* Model1, Model* Model2);
-	static bool SphereCollisionCalculation(SphereCollider* SphereCollider1, SphereCollider* SphereCollider2);
+	static bool SphereCollisionCalculation(SphereCollider* SphereCollider1, Mesh* Mesh1, Model* Model1, SphereCollider* SphereCollider2, Mesh* Mesh2, Model* Model2);
 };
