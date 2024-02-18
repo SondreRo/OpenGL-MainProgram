@@ -59,7 +59,7 @@ public:
 
 	void AddMesh(Mesh* NewMesh);
 
-	std::vector<SphereCollider*> GetSphereColliders();
+	//std::vector<SphereCollider*> GetSphereColliders();
 
 
 	void LoadModel(std::string path);

@@ -102,8 +102,8 @@ int main()
 
     
     Mesh* FelixCube = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
-    FelixCube->AddSphereCollider(glm::vec3(0,0,0), 2, StrippedSphereMesh);
-    FelixCube->AddAxisAlignedCollider(glm::vec3(0,0,0), glm::vec3(1,1,1), BoundingBox);
+    //FelixCube->AddSphereCollider(glm::vec3(0,0,0), 2, StrippedSphereMesh);
+    //FelixCube->AddAxisAlignedCollider(glm::vec3(0,0,0), glm::vec3(1,1,1), BoundingBox);
 
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");

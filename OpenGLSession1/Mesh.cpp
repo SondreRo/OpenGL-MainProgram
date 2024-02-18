@@ -89,7 +89,7 @@ void Mesh::Bind(unsigned int ShaderProgram)
 
     meshMemoryLocation = glGetUniformLocation(ShaderProgram, "mesh");
 
-    if(!SphereColliders.empty())
+   /* if(!SphereColliders.empty())
     {
 	    for (auto sphere_collider: SphereColliders)
 	    {
@@ -98,7 +98,7 @@ void Mesh::Bind(unsigned int ShaderProgram)
                 sphere_collider->SphereMesh->Bind(ShaderProgram);
             }
 	    }
-    }
+    }*/
 
 }
 
@@ -125,13 +125,13 @@ void Mesh::Draw()
     glActiveTexture(GL_TEXTURE0);
 
 
-    if (!SphereColliders.empty())
+    /*if (!SphereColliders.empty())
     {
         for (auto sphere_collider : SphereColliders)
         {
             sphere_collider->SphereMesh->Draw();
         }
-    }
+    }*/
 
 }
 
@@ -217,31 +217,31 @@ glm::vec3 Mesh::GetScale()
 {
     return MeshScale;//GetOwner()->GetScale() * MeshScale;
 }
-
-void Mesh::AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh)
-{
-    SphereMesh->SetScale(glm::vec3(Radius));
-    SphereMesh->SetLocation(Center);
-    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true, SphereMesh);
-    new_sphere_collider->Owner = this;
-	SphereColliders.push_back(new_sphere_collider);
-    
-}
-
-void Mesh::AddAxisAlignedCollider(glm::vec3 Center, glm::vec3 Size, Mesh* BoxMesh)
-{
-    BoxMesh->SetScale(Size);
-    BoxMesh->SetLocation(Center);
-    AxisAlignedBox* new_box_collider = new AxisAlignedBox(Center, Size, true, BoxMesh);
-    AxisAlignedBoxColliders.push_back(new_box_collider);
-}
-
-std::vector<SphereCollider*> Mesh::GetSphereColliders()
-{
-    return SphereColliders;
-}
-
-std::vector<AxisAlignedBox*> Mesh::GetAxisAlignedBoxColliders()
-{
-    return AxisAlignedBoxColliders;
-}
+//
+//void Mesh::AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh)
+//{
+//    SphereMesh->SetScale(glm::vec3(Radius));
+//    SphereMesh->SetLocation(Center);
+//    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true, SphereMesh);
+//    new_sphere_collider->Owner = this;
+//	SphereColliders.push_back(new_sphere_collider);
+//    
+//}
+//
+//void Mesh::AddAxisAlignedCollider(glm::vec3 Center, glm::vec3 Size, Mesh* BoxMesh)
+//{
+//    BoxMesh->SetScale(Size);
+//    BoxMesh->SetLocation(Center);
+//    AxisAlignedBox* new_box_collider = new AxisAlignedBox(Center, Size, true, BoxMesh);
+//    AxisAlignedBoxColliders.push_back(new_box_collider);
+//}
+//
+//std::vector<SphereCollider*> Mesh::GetSphereColliders()
+//{
+//    return SphereColliders;
+//}
+//
+//std::vector<AxisAlignedBox*> Mesh::GetAxisAlignedBoxColliders()
+//{
+//    return AxisAlignedBoxColliders;
+//}

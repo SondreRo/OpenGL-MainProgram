@@ -36,7 +36,7 @@ void AppManager::Tick()
 	{
 		Model->Tick(deltaTime);
 		Model->Draw();
-		for (auto& Model2 : Models)
+		/*for (auto& Model2 : Models)
 		{
 			if (Model != Model2)
 			{
@@ -55,7 +55,7 @@ void AppManager::Tick()
 					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;					
 				}
 			}
-		}
+		}*/
 	}
 }
 
