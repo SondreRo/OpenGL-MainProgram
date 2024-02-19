@@ -9,6 +9,7 @@
 #include "Vertex.h"
 #include "Model.h"
 #include "Triangle.h"
+
 //#include "glad/glad.h"
 //#include "glm/glm.hpp"
 //#include "glm/gtc/type_ptr.hpp"
@@ -88,18 +89,17 @@ void Mesh::Bind(unsigned int ShaderProgram)
 
 
     meshMemoryLocation = glGetUniformLocation(ShaderProgram, "mesh");
-
+    
     if(!SphereColliders.empty())
     {
-	    for (auto sphere_collider: SphereColliders)
-	    {
-            if(sphere_collider->SphereMesh)
+        for (auto SphCol : SphereColliders)
+        {
+            if(SphCol->DisplayMesh)
             {
-                sphere_collider->SphereMesh->Bind(ShaderProgram);
+                SphCol->DisplayMesh->Bind(ShaderProgram);
             }
-	    }
-    }
-
+        }
+    }    
 }
 
 void Mesh::Draw()
@@ -124,15 +124,50 @@ void Mesh::Draw()
 
     glActiveTexture(GL_TEXTURE0);
 
-
-    if (!SphereColliders.empty())
+    if(!SphereColliders.empty())
     {
-        for (auto sphere_collider : SphereColliders)
+        for (auto SphCol : SphereColliders)
         {
-            sphere_collider->SphereMesh->Draw();
+            if(SphCol->DisplayMesh)
+            {
+                SphCol->DisplayMesh->Draw(SphCol->CalculateMatrix());
+            }
         }
     }
+}
 
+void Mesh::Draw(glm::mat4 ParentMat)
+{
+    glUniformMatrix4fv(meshMemoryLocation, 1, GL_FALSE, glm::value_ptr(ParentMat * CalculateMeshMatrix()));
+
+    if(textures.empty())
+    {
+        glBindTexture(GL_TEXTURE_2D, -1);
+    }
+    else
+    {
+        for (unsigned int i = 0; i < textures.size(); i++)
+        {
+            glBindTexture(GL_TEXTURE_2D, textures[0].id);
+        }
+    }
+   
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    if(!SphereColliders.empty())
+    {
+        for (auto SphCol : SphereColliders)
+        {
+            if(SphCol->DisplayMesh)
+            {
+                SphCol->DisplayMesh->Draw();
+            }
+        }
+    }
 }
 
 void Mesh::CleanUp()
@@ -218,17 +253,15 @@ glm::vec3 Mesh::GetScale()
     return MeshScale;//GetOwner()->GetScale() * MeshScale;
 }
 
-void Mesh::AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh)
+void Mesh::AddSphereCollider(glm::vec3 Location, float Radius)
 {
-    SphereMesh->SetScale(glm::vec3(Radius));
-    SphereMesh->SetLocation(Center);
-    SphereCollider* new_sphere_collider = new SphereCollider(Center, Radius, true, SphereMesh);
-    new_sphere_collider->Owner = this;
-	SphereColliders.push_back(new_sphere_collider);
-    
+    SphereCollider* NewSphereCollider = new SphereCollider(Location, Radius);
+    SphereColliders.emplace_back(NewSphereCollider);
 }
 
-std::vector<SphereCollider*> Mesh::GetSphereColliders()
+void Mesh::AddSphereCollider(glm::vec3 Location, float Radius, Mesh* DisplayMesh)
 {
-    return SphereColliders;
+    SphereCollider* NewSphereCollider = new SphereCollider(Location, Radius);
+    NewSphereCollider->DisplayMesh = DisplayMesh;
+    SphereColliders.emplace_back(NewSphereCollider);
 }

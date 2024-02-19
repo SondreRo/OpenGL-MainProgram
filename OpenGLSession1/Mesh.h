@@ -5,9 +5,9 @@
 #include "Vertex.h"
 
 #include "glm/glm.hpp"
-
-#include "Collisions.h"
 #include "Texture.h"
+
+#include "Collision/SphereCollider.h"
 
 class Model;
 
@@ -29,7 +29,10 @@ public:
 
 
 	void Bind(unsigned int ShaderProgram);
+
 	void Draw();
+	void Draw(glm::mat4 ParentMat);
+
 	void CleanUp();
 
 	glm::vec3 MeshLocation{ 0.0f };
@@ -55,10 +58,11 @@ public:
 	void SetScale(glm::vec3 NewScale);
 	void AddScale(glm::vec3 AddScale);
 	glm::vec3 GetScale();
-	
-	std::vector<SphereCollider*> SphereColliders;
-	void AddSphereCollider(glm::vec3 Center, float Radius, Mesh* SphereMesh);
 
-	std::vector<SphereCollider*> GetSphereColliders();
+
+	std::vector<SphereCollider*> SphereColliders;
+
+	void AddSphereCollider(glm::vec3 Location, float Radius);
+	void AddSphereCollider(glm::vec3 Location, float Radius, Mesh* DisplayMesh);
 };
 

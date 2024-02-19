@@ -5,11 +5,6 @@
 #include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
 
-Camera::Camera()
-{
-    viewMemoryLocation = NULL;
-}
-
 Camera::Camera(unsigned inShaderProgram, AppManager* inAppManager)
 {
     viewMemoryLocation = glGetUniformLocation(inShaderProgram, "view");

@@ -24,10 +24,13 @@ public:
 
 	Model* SelectedModel;
 	Camera* myCamera;
+	void Setup(unsigned int ShaderProgram);
 	void ModelSetup(unsigned int ShaderProgram);
-
+	
 	void Update();
+	void CollisionTick();
 	void Tick();
+	void Draw();
 	void CleanUp();
 	
 	float GetDeltaTime();

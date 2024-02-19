@@ -116,23 +116,6 @@ void Model::AddMesh(Mesh* NewMesh)
 	Meshes.push_back(NewMesh);
 }
 
-std::vector<SphereCollider*> Model::GetSphereColliders()
-{
-	std::vector<SphereCollider*> SphereCollidersToReturn;
-	if(Meshes.empty())
-	{
-		return SphereCollidersToReturn;
-	}
-	for (auto Mesh : Meshes)
-	{
-		for (auto sphere_collider : Mesh->GetSphereColliders())
-		{
-			SphereCollidersToReturn.push_back(sphere_collider);
-		}
-	}
-	return SphereCollidersToReturn;
-}
-
 void Model::LoadModel(std::string path)
 {
 	Assimp::Importer importer;

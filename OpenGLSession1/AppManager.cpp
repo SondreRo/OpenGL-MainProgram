@@ -3,12 +3,21 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 #include "Camera.h"
-#include "Collisions.h"
+
+#include "Collision/CollisionManager.h"
+
 
 AppManager::AppManager()
 {
 	SelectedModel = nullptr;
 	myCamera = nullptr;
+}
+
+void AppManager::Setup(unsigned ShaderProgram)
+{
+	myCamera = new Camera(ShaderProgram, this);
+
+	ModelSetup(ShaderProgram);
 }
 
 void AppManager::ModelSetup(unsigned ShaderProgram)
@@ -17,6 +26,9 @@ void AppManager::ModelSetup(unsigned ShaderProgram)
 	{
 		Model->Setup(ShaderProgram);
 	}
+
+
+	myCamera->AddShaderProgramPath(ShaderProgram);
 }
 
 void AppManager::Update()
@@ -26,8 +38,24 @@ void AppManager::Update()
 	lastFrame = currentFrame;
 }
 
+void AppManager::CollisionTick()
+{
+	for (auto Model1 : Models)
+	{
+		for (auto Model2 : Models)
+		{
+			if (Model1 != Model2)
+			{
+				CollisionManager::CheckModelsCollision(Model1, Model2);
+			}
+		}
+	}
+}	
+
+
 void AppManager::Tick()
 {
+	CollisionTick();
 	if(SelectedModel)
 	{
 		//myCamera->SetLocation(SelectedModel->GetLocation());
@@ -35,25 +63,15 @@ void AppManager::Tick()
 	for (auto& Model : Models)
 	{
 		Model->Tick(deltaTime);
+		myCamera->tick(deltaTime);
+	}
+}
+
+void AppManager::Draw()
+{
+	for (auto& Model : Models)
+	{
 		Model->Draw();
-		for (auto& Model2 : Models)
-		{
-			if (Model != Model2)
-			{
-				if (Model2->GetName() == "DifferentFelixCubeModel")
-				{
-					continue;
-				}
-				CollisionResult collisionResult = Collisions::CheckSphereCollisions(Model, Model2);
-				if(collisionResult.IsColliding)
-				{
-					std::cout << collisionResult.MainModel->GetName() << " " << collisionResult.OtherModel->GetName() << std::endl;
-			/*		collisionResult.OtherModel->AddScale(glm::vec3(-0.001f));
-					collisionResult.MainModel->AddScale(glm::vec3(-0.001f));*/
-					
-				}
-			}
-		}
 	}
 }
 

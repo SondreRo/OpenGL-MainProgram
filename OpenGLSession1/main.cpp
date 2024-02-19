@@ -33,9 +33,6 @@ void processInput(GLFWwindow* window);
 
 // settings
 
-
-Camera myCamera;
-
 int main()
 {
     // glfw: initialize and configure
@@ -72,57 +69,40 @@ int main()
 
     unsigned int shaderProgram = ShaderProgram::CreateProgram();
 
-    myCamera.AddShaderProgramPath(shaderProgram);
-    myCamera.AddAppManager(&appManager);
-    appManager.myCamera = &myCamera;
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
 
 
-/*    Line MyLine;
-    ReadFiles::ReadFileVertexData("D:/School/Matte3/09.01/Testing/Oppgave2.txt", MyLine);
-    MyLine.Bind(shaderProgram);*/ 
+
 
 	MeshLoader meshLoader;
     // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
     ///////////////////////////////////////////////// HERE YOU CAN LOAD MESH //////////////////////////////////////////////
     // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
 
-    Mesh* StrippedSphereMesh = meshLoader.LoadMesh("Defaults/Mesh/SphereStripped.fbx", shaderProgram);
-    StrippedSphereMesh->SetName("StrippedSphereMesh");
-    //Model* DefaultCubeModel = new Model();
-    //DefaultCubeModel->AddMesh(StrippedSphereMesh);
-    //appManager.AddModel(DefaultCubeModel);
-
-
-
-  
+    Mesh* SphereDisplayMesh = meshLoader.LoadMesh("Defaults/Mesh/SphereStripped.fbx", shaderProgram);
+    
+    
     Mesh* FelixCube = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
-    FelixCube->AddSphereCollider(glm::vec3(5,0,0), 2, StrippedSphereMesh);
+    FelixCube->AddSphereCollider(glm::vec3(2,0,0),1, SphereDisplayMesh);
 
-
+    
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");
     FelixCubeModel->AddMesh(FelixCube);
     FelixCubeModel->SetLocation(glm::vec3(3, 0, 0));
-
     appManager.AddModel(FelixCubeModel);
 
     Model* FelixCubeModel2 = new Model();
-    FelixCubeModel2->SetName("DifferentFelixCubeModel");
+    FelixCubeModel2->SetName("FelixCubeModel2");
     FelixCubeModel2->AddMesh(FelixCube);
-    FelixCubeModel2->SetLocation(glm::vec3(10, 0, 0));
+    FelixCubeModel2->SetLocation(glm::vec3(0, 0, 0));
     appManager.AddModel(FelixCubeModel2);
-
-
-
-
-
-
-
-    appManager.ModelSetup(shaderProgram);
+    
+ 
+    
+    appManager.Setup(shaderProgram);
 
 
     // render loop
@@ -143,30 +123,25 @@ int main()
 
         
     	glUseProgram(shaderProgram);
-        
-        //MyLine.Draw();
+
+       
         appManager.Tick();
-        myCamera.tick(appManager.GetDeltaTime());
+        appManager.Draw();
+        
 
         
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-
     appManager.CleanUp();
-    glDeleteProgram(shaderProgram);
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
+    glDeleteProgram(shaderProgram);
+    
     glfwTerminate();
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -182,7 +157,7 @@ void processInput(GLFWwindow* window)
 
     // // // Camera Input
   
-    myCamera.HandleInput(window);
+    appManager.myCamera->HandleInput(window);
 
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
     {
@@ -250,23 +225,19 @@ void processInput(GLFWwindow* window)
         }
     }
 }
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     appManager.SetScreenSize(width, height);
     glViewport(0, 0, width, height);
 }
-
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    myCamera.AddRotation(static_cast<float>(xpos), static_cast<float>(ypos));
+    appManager.myCamera->AddRotation(static_cast<float>(xpos), static_cast<float>(ypos));
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    myCamera.SetSpeed(myCamera.GetSpeed() + (static_cast<float>(yoffset) * 1000) * appManager.GetDeltaTime());
-    std::cout << myCamera.GetSpeed() << std::endl;
+    appManager.myCamera->SetSpeed(appManager.myCamera->GetSpeed() + (static_cast<float>(yoffset) * 1000) * appManager.GetDeltaTime());
+    std::cout << appManager.myCamera->GetSpeed() << std::endl;
 
     
 }

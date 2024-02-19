@@ -19,7 +19,7 @@ private:
 	glm::vec3 LocalLocation = glm::vec3(0.0f, 0.0f, 0.0f); // Start Position
 	
 	// CameraRotation
-	glm::vec3 LocalRotation = glm::vec3(0.0f,0.0f,0.0f);
+	glm::vec3 LocalRotation = glm::vec3(0,0.0f,0.0f);
 
 	
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -34,7 +34,7 @@ private:
 	float lastX = 400, lastY = 300;
 	bool firstMouse = true;
 public:
-	Camera();
+	//Camera();
 	Camera(unsigned int inShaderProgram, AppManager* inAppManager);
 	void AddShaderProgramPath(unsigned int inShaderProgram);
 	void AddAppManager(AppManager* inAppManager);
