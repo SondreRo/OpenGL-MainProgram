@@ -120,27 +120,36 @@ int main()
 
 
 
-    std::vector<Vertex> MyListOfPoints;
-    MyListOfPoints.emplace_back(glm::vec3(1, 1, 0));
-    MyListOfPoints.emplace_back(glm::vec3(1.5, 3, 0));
-    MyListOfPoints.emplace_back(glm::vec3(2.5, 4, 0));
-    MyListOfPoints.emplace_back(glm::vec3(4, 2, 0));
-    MyListOfPoints.emplace_back(glm::vec3(6, 5, 0));
-    MyListOfPoints.emplace_back(glm::vec3(6.5, 3.5, 0));
-    MyListOfPoints.emplace_back(glm::vec3(7, 7, 0));
+    // Oppgave 1:
+    std::vector<Vertex> MyListOfPoints1;
+    MyListOfPoints1.emplace_back(glm::vec3(1, 1, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(1.5, 3, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(2.5, 4, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(4, 2, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(6, 5, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(6.5, 3.5, 0));
+    MyListOfPoints1.emplace_back(glm::vec3(7, 7, 0));
+    Dots NewDots1;
+    NewDots1.mVertices = MyListOfPoints1;
+    NewDots1.Bind(shaderProgram);
+    Line NewLine1;
+    NewLine1.mVertices = Oblig2::Oppgave1(MyListOfPoints1);
+    NewLine1.Bind(shaderProgram);
+
+    // Oppgave 2:
+    std::vector<Vertex> MyListOfPoints2;
+    MyListOfPoints2.emplace_back(glm::vec3(-4, 2, 0));
+    MyListOfPoints2.emplace_back(glm::vec3(-2.5, 4, 0));
+    MyListOfPoints2.emplace_back(glm::vec3(-1.5, 3, 0));
+    MyListOfPoints2.emplace_back(glm::vec3(-1, 1, 0));
+    Dots NewDots2;
+    NewDots2.mVertices = MyListOfPoints2;
+    NewDots2.Bind(shaderProgram);
+    Line NewLine2;
+    NewLine2.mVertices = Oblig2::Oppgave2(MyListOfPoints2);
+    NewLine2.Bind(shaderProgram);
+
     
-
-
-    Dots NewDots;
-    NewDots.mVertices = MyListOfPoints;
-    NewDots.Bind(shaderProgram);
-    
-
-    Line NewLine;
-    NewLine.mVertices = Oblig2::Test(MyListOfPoints);
-
-    NewLine.Bind(shaderProgram);
-
     appManager.ModelSetup(shaderProgram);
 
 
@@ -167,9 +176,11 @@ int main()
         appManager.Tick();
         myCamera.tick(appManager.GetDeltaTime());
 
-        NewLine.Draw();
-        NewDots.Draw();
+        NewLine1.Draw();
+        NewDots1.Draw();
 
+        NewLine2.Draw();
+        NewDots2.Draw();
         
         glfwSwapBuffers(window);
         glfwPollEvents();
