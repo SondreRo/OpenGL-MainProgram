@@ -32,7 +32,9 @@ public:
 	void Tick();
 	void Draw();
 	void CleanUp();
-	
+
+	void HandleInput(struct GLFWwindow* window);
+
 	float GetDeltaTime();
 
 	void SetScreenSize(unsigned int Width, unsigned int Height);

@@ -21,6 +21,7 @@
 #include "Window.h"
 #include "Model.h"
 #include "MeshLoader.h"
+#include "Character.h"
 
 
 AppManager appManager;
@@ -82,26 +83,67 @@ int main()
     // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
 
     Mesh* SphereDisplayMesh = meshLoader.LoadMesh("Defaults/Mesh/SphereStripped.fbx", shaderProgram);
+    SphereDisplayMesh->SetName("SphereDisplayMesh");
+    Mesh* CubeDisplayMesh = meshLoader.LoadMesh("Defaults/Mesh/CubeStripped.fbx", shaderProgram);
+    CubeDisplayMesh->SetName("CubeDisplayMesh");
+
+	Mesh* CharacterMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/Character.fbx", shaderProgram);
+    //CharacterMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 1, 0), glm::vec3(.4, 1, .4), CubeDisplayMesh);
+    CharacterMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
+    CharacterMesh->SetName("CharacterMesh");
+
     
-    
-    Mesh* FelixCube = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
-    FelixCube->AddSphereCollider(glm::vec3(2,0,0),1, SphereDisplayMesh);
+    Mesh* FelixCubeMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
+    FelixCubeMesh->SetName("FelixCubeMesh");
+    FelixCubeMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 0, 0), glm::vec3(1), CubeDisplayMesh);
+	//FelixCubeMesh->AddSphereCollider(glm::vec3(2,-1,0),2, SphereDisplayMesh);
+
+    Mesh* GroundPlaneMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/GroundPlane.fbx", shaderProgram);
+    GroundPlaneMesh->SetName("GroundPlaneMesh");
+    GroundPlaneMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 0, 0), glm::vec3(40, 0.1, 40), CubeDisplayMesh);
+
+    Mesh* HouseMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/House.fbx", shaderProgram);
+    HouseMesh->SetName("HouseMesh");
 
     
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");
-    FelixCubeModel->AddMesh(FelixCube);
-    FelixCubeModel->SetLocation(glm::vec3(3, 0, 0));
+    FelixCubeModel->AddMesh(FelixCubeMesh);
+    FelixCubeModel->SetLocation(glm::vec3(3, 2, 0));
     appManager.AddModel(FelixCubeModel);
 
     Model* FelixCubeModel2 = new Model();
     FelixCubeModel2->SetName("FelixCubeModel2");
-    FelixCubeModel2->AddMesh(FelixCube);
-    FelixCubeModel2->SetLocation(glm::vec3(0, 0, 0));
+    FelixCubeModel2->AddMesh(FelixCubeMesh);
+    FelixCubeModel2->SetLocation(glm::vec3(0, 2, 0));
     appManager.AddModel(FelixCubeModel2);
     
- 
-    
+    Model* CubeTest = new Model();
+    CubeTest->SetName("CubeTest");
+    CubeTest->AddMesh(FelixCubeMesh);
+    CubeTest->SetLocation(glm::vec3(10, 10, 10));
+    appManager.AddModel(CubeTest);
+
+
+
+
+    Model* GroundPlaneModel = new Model();
+    GroundPlaneModel->SetName("GroundPlane");
+    GroundPlaneModel->AddMesh(GroundPlaneMesh);
+    appManager.AddModel(GroundPlaneModel);
+
+    Model* HouseModel = new Model();
+    HouseModel->SetName("House");
+    HouseModel->AddMesh(HouseMesh);
+    //appManager.AddModel(HouseModel);
+
+    Character* MyCharacter = new Character();
+    MyCharacter->SetName("MyCharacter");
+    MyCharacter->AddMesh(CharacterMesh);
+    MyCharacter->SetLocation(glm::vec3(1, 6, 1));
+    appManager.AddModel(MyCharacter);
+    //appManager.AddModel(HouseModel);
+
     appManager.Setup(shaderProgram);
 
 
@@ -157,7 +199,8 @@ void processInput(GLFWwindow* window)
 
     // // // Camera Input
   
-    appManager.myCamera->HandleInput(window);
+    
+    appManager.HandleInput(window);
 
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
     {
@@ -182,28 +225,28 @@ void processInput(GLFWwindow* window)
     {
         if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(0, 0, -1) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(0, 0, -2) * appManager.GetDeltaTime());
         }
         if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(0, 0, 1) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(0, 0, 2) * appManager.GetDeltaTime());
         }
         if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(1, 0, 0) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(2, 0, 0) * appManager.GetDeltaTime());
         }
         if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(-1, 0, 0) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(-2, 0, 0) * appManager.GetDeltaTime());
         }
 
         if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(0, 1, 0) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(0, 2, 0) * appManager.GetDeltaTime());
         }
         if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS)
         {
-            appManager.SelectedModel->AddLocation(glm::vec3(0, -1, 0) * appManager.GetDeltaTime());
+            appManager.SelectedModel->AddLocation(glm::vec3(0, -2, 0) * appManager.GetDeltaTime());
         }
 
         if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)

@@ -15,7 +15,7 @@ private:
 	float Zoom = 45.0f;
 
 	// CameraLocation
-	glm::vec3 WorldLocation = glm::vec3(0.0f, 0.0f, -5.0f);
+	glm::vec3 WorldLocation = glm::vec3(0.0f, 2.0f, -5.0f);
 	glm::vec3 LocalLocation = glm::vec3(0.0f, 0.0f, 0.0f); // Start Position
 	
 	// CameraRotation

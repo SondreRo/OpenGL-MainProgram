@@ -59,7 +59,7 @@ void Mesh::Bind(unsigned int ShaderProgram)
     glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
-
+    
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
@@ -79,14 +79,12 @@ void Mesh::Bind(unsigned int ShaderProgram)
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
     
-
+    glBindBuffer(GL_ARRAY_BUFFER, 1);
+    glBindVertexArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, 2);
+    glBindVertexArray(2);
 
     meshMemoryLocation = glGetUniformLocation(ShaderProgram, "mesh");
     
@@ -99,7 +97,17 @@ void Mesh::Bind(unsigned int ShaderProgram)
                 SphCol->DisplayMesh->Bind(ShaderProgram);
             }
         }
-    }    
+    }
+    if (!AxisAlignedBoundingBoxColliders.empty())
+    {
+        for (auto AABBCol : AxisAlignedBoundingBoxColliders)
+        {
+            if (AABBCol->DisplayMesh)
+            {
+                AABBCol->DisplayMesh->Bind(ShaderProgram);
+            }
+        }
+    }
 }
 
 void Mesh::Draw()
@@ -128,17 +136,31 @@ void Mesh::Draw()
     {
         for (auto SphCol : SphereColliders)
         {
-            if(SphCol->DisplayMesh)
-            {
-                SphCol->DisplayMesh->Draw(SphCol->CalculateMatrix());
-            }
+            SphCol->DrawDisplayMesh();
+            //if(SphCol->DisplayMesh)
+            //{
+            //    SphCol->DisplayMesh->Draw(SphCol->CalculateMatrix());
+            //}
         }
     }
+    if (!AxisAlignedBoundingBoxColliders.empty())
+    {
+        for (auto AABBCol : AxisAlignedBoundingBoxColliders)
+        {
+            AABBCol->DrawDisplayMesh();
+            //if (AABBCol->DisplayMesh)
+            //{
+            //    AABBCol->DisplayMesh->Draw(AABBCol->CalculateMatrix());
+            //}
+        }
+    }
+
 }
 
 void Mesh::Draw(glm::mat4 ParentMat)
 {
     glUniformMatrix4fv(meshMemoryLocation, 1, GL_FALSE, glm::value_ptr(ParentMat * CalculateMeshMatrix()));
+    
 
     if(textures.empty())
     {
@@ -158,7 +180,7 @@ void Mesh::Draw(glm::mat4 ParentMat)
 
     glActiveTexture(GL_TEXTURE0);
 
-    if(!SphereColliders.empty())
+   /* if(!SphereColliders.empty())
     {
         for (auto SphCol : SphereColliders)
         {
@@ -168,6 +190,16 @@ void Mesh::Draw(glm::mat4 ParentMat)
             }
         }
     }
+    if (!AxisAlignedBoundingBoxColliders.empty())
+    {
+        for (auto AABBCol : AxisAlignedBoundingBoxColliders)
+        {
+            if (AABBCol->DisplayMesh)
+            {
+                AABBCol->DisplayMesh->Draw(AABBCol->CalculateMatrix());
+            }
+        }
+    }*/
 }
 
 void Mesh::CleanUp()
@@ -253,6 +285,70 @@ glm::vec3 Mesh::GetScale()
     return MeshScale;//GetOwner()->GetScale() * MeshScale;
 }
 
+glm::vec3 Mesh::CalculateCenter()
+{
+
+    if (vertices.empty())
+    {
+        return glm::vec3(0,0,0);
+    }
+
+
+    float XValue = 0, YValue = 0, ZValue = 0;
+
+
+	for (auto vert : vertices)
+	{
+        glm::vec3 Pos = vert.Position;
+
+        XValue += Pos.x;
+        YValue += Pos.y;
+        ZValue += Pos.z;
+
+
+	}
+
+
+    float avgX = XValue / vertices.size();
+    float avgY = YValue / vertices.size();
+    float avgZ = ZValue / vertices.size();
+
+    return glm::vec3(avgX, avgY, avgZ);
+
+}
+
+glm::vec3 Mesh::CalculateScale()
+{
+    if (vertices.empty())
+    {
+        return glm::vec3(0, 0, 0);
+    }
+
+
+    float XMax = 0, XMin = 0;
+    float YMax = 0, YMin = 0;
+    float ZMax = 0, ZMin = 0;
+
+
+    for (auto vert : vertices)
+    {
+        if (vert.Position.x < XMin) XMin = vert.Position.x;
+        if (vert.Position.x > XMax) XMax = vert.Position.x;
+
+        if (vert.Position.y < YMin) YMin = vert.Position.y;
+        if (vert.Position.y > YMax) YMax = vert.Position.y;
+
+        if (vert.Position.z < ZMin) ZMin = vert.Position.z;
+        if (vert.Position.z > ZMax) ZMax = vert.Position.z;
+    }
+
+    float SizeX = abs(XMax - XMin) / 2;
+    float SizeY = abs(YMax - YMin) / 2;
+    float SizeZ = abs(ZMax - ZMin) / 2;
+
+    return glm::vec3(SizeX, SizeY, SizeZ);
+}
+
 void Mesh::AddSphereCollider(glm::vec3 Location, float Radius)
 {
     SphereCollider* NewSphereCollider = new SphereCollider(Location, Radius);
@@ -265,3 +361,27 @@ void Mesh::AddSphereCollider(glm::vec3 Location, float Radius, Mesh* DisplayMesh
     NewSphereCollider->DisplayMesh = DisplayMesh;
     SphereColliders.emplace_back(NewSphereCollider);
 }
+
+void Mesh::AddAxisAlignedBoundingBoxCollider(glm::vec3 Location, glm::vec3 Scale)
+{
+    
+    AxisAlignedBoundingBox* NewAxisAlignedBoxCollider = new AxisAlignedBoundingBox(Location, Scale);
+    AxisAlignedBoundingBoxColliders.emplace_back(NewAxisAlignedBoxCollider);
+}
+
+void Mesh::AddAxisAlignedBoundingBoxCollider(glm::vec3 Location, glm::vec3 Scale, Mesh* DisplayMesh)
+{
+    CalculateScale();
+    AxisAlignedBoundingBox* NewAxisAlignedBoxCollider = new AxisAlignedBoundingBox(Location, Scale);
+    NewAxisAlignedBoxCollider->DisplayMesh = DisplayMesh;
+    AxisAlignedBoundingBoxColliders.emplace_back(NewAxisAlignedBoxCollider);
+}
+
+void Mesh::AddAxisAlignedBoundingBoxColliderAuto(Mesh* DisplayMesh)
+{
+    
+    AxisAlignedBoundingBox* NewAxisAlignedBoxCollider = new AxisAlignedBoundingBox(CalculateCenter(), CalculateScale());
+    NewAxisAlignedBoxCollider->DisplayMesh = DisplayMesh;
+    AxisAlignedBoundingBoxColliders.emplace_back(NewAxisAlignedBoxCollider);
+}
+

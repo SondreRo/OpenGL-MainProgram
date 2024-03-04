@@ -25,3 +25,11 @@ glm::mat4 Collider::CalculateMatrix()
 	glm::vec3 test = MeshMatrix[3];
 	return MeshMatrix;
 }
+
+void Collider::DrawDisplayMesh()
+{
+	if (DisplayMesh)
+	{
+		DisplayMesh->Draw(CalculateMatrix());
+	}
+}

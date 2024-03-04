@@ -6,6 +6,7 @@
 
 #include "glm/glm.hpp"
 #include "Texture.h"
+#include "Collision/AxisAlignedBoundingBox.h"
 
 #include "Collision/SphereCollider.h"
 
@@ -59,10 +60,20 @@ public:
 	void AddScale(glm::vec3 AddScale);
 	glm::vec3 GetScale();
 
+	glm::vec3 CalculateCenter();
+	glm::vec3 CalculateScale();
+
+
 
 	std::vector<SphereCollider*> SphereColliders;
 
 	void AddSphereCollider(glm::vec3 Location, float Radius);
 	void AddSphereCollider(glm::vec3 Location, float Radius, Mesh* DisplayMesh);
+
+	std::vector<AxisAlignedBoundingBox*> AxisAlignedBoundingBoxColliders;
+
+	void AddAxisAlignedBoundingBoxCollider(glm::vec3 Location, glm::vec3 Scale);
+	void AddAxisAlignedBoundingBoxCollider(glm::vec3 Location, glm::vec3 Scale, Mesh* DisplayMesh);
+	void AddAxisAlignedBoundingBoxColliderAuto(Mesh* DisplayMesh);
 };
 

@@ -26,5 +26,7 @@ public:
 	void SetScale(glm::vec3 NewScale);
 	glm::vec3 GetScale();
 
-	glm::mat4 CalculateMatrix();
+	virtual glm::mat4 CalculateMatrix();
+
+	virtual void DrawDisplayMesh();
 };

@@ -15,7 +15,7 @@ Model::Model()
 	ModelLocation = glm::vec3(0);
 	ModelRotation = glm::vec3(0);
 	ModelScale = glm::vec3(1);
-
+	Velocity = glm::vec3(0);
 
 }
 
@@ -81,6 +81,14 @@ void Model::Draw()
 	{
 		Mesh->Draw();
 	}
+}
+
+void Model::CollisionResponce(Mesh* OwnMesh, Mesh* OtherMesh, Model* OtherModel)
+{
+}
+
+void Model::HandleInput(GLFWwindow* window)
+{
 }
 
 void Model::CleanUp()

@@ -134,6 +134,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppManager.cpp" />
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Collision\AxisAlignedBoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision\Collider.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp">
@@ -230,6 +232,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppManager.h" />
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="Collision\AxisAlignedBoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision\Collider.h" />
     <ClInclude Include="Collision\CollisionManager.h" />

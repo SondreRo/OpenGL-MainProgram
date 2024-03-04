@@ -46,8 +46,10 @@ public:
 	inline glm::vec3 GetScale() { return ModelScale; }
 
 	
-	void Tick(float DeltaTime);
-	void Draw();
+	virtual void Tick(float DeltaTime);
+	virtual void Draw();
+	virtual void CollisionResponce(Mesh* OwnMesh, Mesh* OtherMesh, Model* OtherModel);
+	virtual void HandleInput(struct GLFWwindow* window);
 
 
 	// Extra

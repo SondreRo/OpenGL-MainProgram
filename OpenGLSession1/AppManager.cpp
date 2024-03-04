@@ -83,6 +83,15 @@ void AppManager::CleanUp()
 	}
 }
 
+void AppManager::HandleInput(GLFWwindow* window)
+{
+	myCamera->HandleInput(window);
+	for (auto& Model : Models)
+	{
+		Model->HandleInput(window);
+	}
+}
+
 float AppManager::GetDeltaTime()
 {
 	return deltaTime;

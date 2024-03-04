@@ -41,6 +41,11 @@ void Camera::tick(float DeltaTime)
 void Camera::AddMovement(glm::vec3 Direction, float Speed)
 {
     WorldLocation += Speed * Direction * cameraSpeed * appManager->GetDeltaTime();
+
+    if (WorldLocation.y <= 0.2f)
+    {
+        WorldLocation.y = 0.2f;
+    }
 }
 
 void Camera::AddRotation(float mouseX, float mouseY)
@@ -76,6 +81,12 @@ void Camera::AddRotation(float mouseX, float mouseY)
 
 void Camera::HandleInput(GLFWwindow *window)
 {
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // Forward
+    {
+        return;
+    }
+
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) // Forward
     {
         AddMovement(GetForwardVector(), 1);
