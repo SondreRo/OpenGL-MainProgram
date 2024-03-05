@@ -56,12 +56,14 @@ void AppManager::CollisionTick()
 void AppManager::Tick()
 {
 	CollisionTick();
-	if(SelectedModel)
+	if(CurrentCharacter)
 	{
-		//myCamera->SetLocation(SelectedModel->GetLocation());
+		myCamera->SetLocation(CurrentCharacter->GetLocation());
 	}
 	for (auto& Model : Models)
 	{
+		if (Model == nullptr) return;
+
 		Model->Tick(deltaTime);
 		myCamera->tick(deltaTime);
 	}
@@ -86,10 +88,16 @@ void AppManager::CleanUp()
 void AppManager::HandleInput(GLFWwindow* window)
 {
 	myCamera->HandleInput(window);
-	for (auto& Model : Models)
+
+	if (CurrentCharacter)
 	{
-		Model->HandleInput(window);
+		CurrentCharacter->HandleInput(window);
 	}
+
+	//for (auto& Model : Models)
+	//{
+	//	Model->HandleInput(window);
+	//}
 }
 
 float AppManager::GetDeltaTime()
@@ -134,6 +142,13 @@ Model* AppManager::GetClosestModel()
 			ClosestDistance = currentDistance;
 		}
 	}
+
+	if (Character* ClosestCharacter = dynamic_cast<Character*>(ClosestModel))
+	{
+		CurrentCharacter = ClosestCharacter;
+	}
+
+
 	SelectedModel = ClosestModel;
 	return ClosestModel;
 

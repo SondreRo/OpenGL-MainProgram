@@ -29,7 +29,10 @@ void Character::CollisionResponce(Mesh* OwnMesh, Mesh* OtherMesh, Model* OtherMo
 	if (GetLocation().y > OtherModel->GetLocation().y)
 	{
 		onGround = true;
-		Velocity.y = 0;
+		if (Velocity.y < 0)
+		{
+			Velocity.y = 0;
+		}
 		return;
 	}
 	else
@@ -40,12 +43,34 @@ void Character::CollisionResponce(Mesh* OwnMesh, Mesh* OtherMesh, Model* OtherMo
 	if (GetLocation().x > OtherModel->GetLocation().x)
 	{
 		onGround = true;
-		Velocity.x *= -1;
+		if(Velocity.x < 0)
+		{
+			Velocity.x = 0;
+		}
 	}
 	if (GetLocation().x < OtherModel->GetLocation().x)
 	{
 		onGround = true;
-		Velocity.x *= -1;
+		if (Velocity.x > 0)
+		{
+			Velocity.x = 0;
+		}
+	}
+	if (GetLocation().z > OtherModel->GetLocation().z)
+	{
+		onGround = true;
+		if (Velocity.z < 0)
+		{
+			Velocity.z = 0;
+		}
+	}
+	if (GetLocation().z < OtherModel->GetLocation().z)
+	{
+		onGround = true;
+		if (Velocity.z > 0)
+		{
+			Velocity.z = 0;
+		}
 	}
 }
 
@@ -71,6 +96,13 @@ void Character::HandleInput(GLFWwindow* window)
 	{
 		Velocity.z = -Speed;
 	}
+
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) // Forward
+	{
+		Velocity.y = 3;
+	}
+
 }
 
 float Character::AddMovementInput(glm::vec3 Direction)

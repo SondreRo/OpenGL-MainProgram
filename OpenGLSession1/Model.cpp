@@ -76,6 +76,7 @@ void Model::Tick(float DeltaTime)
 
 void Model::Draw()
 {
+	if (!IsVisible) return;
 	glUniformMatrix4fv(modelMemoryLocation, 1, GL_FALSE, glm::value_ptr(CalculateMeshMatrix()));
 	for (auto Mesh : Meshes)
 	{

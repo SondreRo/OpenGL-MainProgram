@@ -2,6 +2,7 @@
 #include <vector>
 #include <windows.h>
 
+#include "Character.h"
 #include "Model.h"
 
 class Camera;
@@ -23,6 +24,7 @@ public:
 	AppManager();
 
 	Model* SelectedModel;
+	Character* CurrentCharacter;
 	Camera* myCamera;
 	void Setup(unsigned int ShaderProgram);
 	void ModelSetup(unsigned int ShaderProgram);

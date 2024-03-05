@@ -16,7 +16,7 @@ private:
 
 	// CameraLocation
 	glm::vec3 WorldLocation = glm::vec3(0.0f, 2.0f, -5.0f);
-	glm::vec3 LocalLocation = glm::vec3(0.0f, 0.0f, 0.0f); // Start Position
+	glm::vec3 LocalLocation = glm::vec3(-5.0f, 3.0f, 0.0f); // Start Position
 	
 	// CameraRotation
 	glm::vec3 LocalRotation = glm::vec3(0,0.0f,0.0f);

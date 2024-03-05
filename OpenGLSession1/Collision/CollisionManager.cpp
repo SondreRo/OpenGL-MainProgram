@@ -8,6 +8,11 @@ void CollisionManager::CheckModelsCollision(Model* Model1, Model* Model2)
 {
 	if (Model1->Meshes.empty() || Model2->Meshes.empty()) return;
 
+	if (Model1->IsCollisionDisabled || Model2->IsCollisionDisabled)
+	{
+		return;
+	}
+
 	
 	for (auto Mesh1 : Model1->Meshes)
 	{

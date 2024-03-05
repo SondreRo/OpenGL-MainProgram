@@ -71,4 +71,7 @@ public:
 	unsigned int TextureFromFile(std::string path, std::string directory);
 
 	//std::string directory;
+
+	bool IsVisible = true;
+	bool IsCollisionDisabled = false;
 };

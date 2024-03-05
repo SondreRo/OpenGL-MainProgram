@@ -22,6 +22,7 @@
 #include "Model.h"
 #include "MeshLoader.h"
 #include "Character.h"
+#include "Coin.h"
 
 
 AppManager appManager;
@@ -104,8 +105,12 @@ int main()
 
     Mesh* HouseMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/House.fbx", shaderProgram);
     HouseMesh->SetName("HouseMesh");
+    HouseMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
 
-    
+    Mesh* CoinMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/Coin.fbx", shaderProgram);
+    CoinMesh->SetName("CoinMesh");
+    CoinMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
+
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");
     FelixCubeModel->AddMesh(FelixCubeMesh);
@@ -135,13 +140,39 @@ int main()
     Model* HouseModel = new Model();
     HouseModel->SetName("House");
     HouseModel->AddMesh(HouseMesh);
-    //appManager.AddModel(HouseModel);
+    HouseModel->SetRotation(glm::vec3(0, -90, 0));
+    appManager.AddModel(HouseModel);
+
+    Coin* CoinModel = new Coin();
+    CoinModel->SetName("CoinModel");
+    CoinModel->AddMesh(CoinMesh);
+    CoinModel->SetLocation(glm::vec3(0, 1, 10));
+    appManager.AddModel(CoinModel);
+
+    Coin* CoinModel2 = new Coin();
+    CoinModel2->SetName("CoinModel2");
+    CoinModel2->AddMesh(CoinMesh);
+    CoinModel2->SetLocation(glm::vec3(0, 1, 13));
+    appManager.AddModel(CoinModel2);
+
+	Coin* CoinModel3 = new Coin();
+    CoinModel3->SetName("CoinModel3");
+    CoinModel3->AddMesh(CoinMesh);
+    CoinModel3->SetLocation(glm::vec3(0, 1, 16));
+    appManager.AddModel(CoinModel3);
+
+	Coin* CoinModel4 = new Coin();
+    CoinModel4->SetName("CoinModel4");
+    CoinModel4->AddMesh(CoinMesh);
+    CoinModel4->SetLocation(glm::vec3(0, 1, 19));
+    appManager.AddModel(CoinModel4);
 
     Character* MyCharacter = new Character();
     MyCharacter->SetName("MyCharacter");
     MyCharacter->AddMesh(CharacterMesh);
-    MyCharacter->SetLocation(glm::vec3(1, 6, 1));
+    MyCharacter->SetLocation(glm::vec3(-20, 20, 1));
     appManager.AddModel(MyCharacter);
+    appManager.CurrentCharacter = MyCharacter;
     //appManager.AddModel(HouseModel);
 
     appManager.Setup(shaderProgram);
@@ -219,6 +250,14 @@ void processInput(GLFWwindow* window)
     //     std::cout << "Tab" << std::endl;
     //     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     // }
+
+    if (appManager.CurrentCharacter != nullptr)
+    {
+        if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+        {
+            appManager.CurrentCharacter = nullptr;
+        }
+    }
 
 
     if (appManager.SelectedModel != nullptr)
