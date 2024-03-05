@@ -121,7 +121,6 @@ void Model::SetName(std::string NewName)
 
 void Model::AddMesh(Mesh* NewMesh)
 {
-	NewMesh->Owner = this;
 	Meshes.push_back(NewMesh);
 }
 

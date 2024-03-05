@@ -77,7 +77,6 @@ int main()
 
 
 
-
 	MeshLoader meshLoader;
     // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ## // ##
     ///////////////////////////////////////////////// HERE YOU CAN LOAD MESH //////////////////////////////////////////////
@@ -90,26 +89,23 @@ int main()
 
 	Mesh* CharacterMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/Character.fbx", shaderProgram);
     //CharacterMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 1, 0), glm::vec3(.4, 1, .4), CubeDisplayMesh);
-    CharacterMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
     CharacterMesh->SetName("CharacterMesh");
 
     
     Mesh* FelixCubeMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/FelixCube.fbx", shaderProgram);
     FelixCubeMesh->SetName("FelixCubeMesh");
-    FelixCubeMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 0, 0), glm::vec3(1), CubeDisplayMesh);
 	//FelixCubeMesh->AddSphereCollider(glm::vec3(2,-1,0),2, SphereDisplayMesh);
 
     Mesh* GroundPlaneMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/GroundPlane.fbx", shaderProgram);
     GroundPlaneMesh->SetName("GroundPlaneMesh");
-    GroundPlaneMesh->AddAxisAlignedBoundingBoxCollider(glm::vec3(0, 0, 0), glm::vec3(40, 0.1, 40), CubeDisplayMesh);
+   
 
     Mesh* HouseMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/House.fbx", shaderProgram);
     HouseMesh->SetName("HouseMesh");
-    HouseMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
 
     Mesh* CoinMesh = meshLoader.LoadMesh("C:/Users/soroe/Documents/Oblig2Prog/Coin.fbx", shaderProgram);
     CoinMesh->SetName("CoinMesh");
-    CoinMesh->AddAxisAlignedBoundingBoxColliderAuto(CubeDisplayMesh);
+  
 
     Model* FelixCubeModel = new Model();
     FelixCubeModel->SetName("FelixCubeModel");
@@ -128,9 +124,6 @@ int main()
     CubeTest->AddMesh(FelixCubeMesh);
     CubeTest->SetLocation(glm::vec3(10, 10, 10));
     appManager.AddModel(CubeTest);
-
-
-
 
     Model* GroundPlaneModel = new Model();
     GroundPlaneModel->SetName("GroundPlane");

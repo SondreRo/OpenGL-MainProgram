@@ -4,7 +4,6 @@
 #include <iostream>
 #include "Camera.h"
 
-#include "Collision/CollisionManager.h"
 
 
 AppManager::AppManager()
@@ -38,24 +37,8 @@ void AppManager::Update()
 	lastFrame = currentFrame;
 }
 
-void AppManager::CollisionTick()
-{
-	for (auto Model1 : Models)
-	{
-		for (auto Model2 : Models)
-		{
-			if (Model1 != Model2)
-			{
-				CollisionManager::CheckModelsCollision(Model1, Model2);
-			}
-		}
-	}
-}	
-
-
 void AppManager::Tick()
 {
-	CollisionTick();
 	if(CurrentCharacter)
 	{
 		myCamera->SetLocation(CurrentCharacter->GetLocation());
